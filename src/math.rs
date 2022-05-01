@@ -23,7 +23,7 @@ impl ipos3 {
     ///
     /// Its mostly used as eq for checking inside of a VoxelColumn.
     #[inline(always)]
-    pub fn range_cmp(&self, other: ipos3) -> bool {
+    pub fn range_cmp(&self, other: ipos2) -> bool {
         return self.x == other.x && self.y == other.y;
     }
 }
