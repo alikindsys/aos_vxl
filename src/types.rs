@@ -14,6 +14,25 @@ pub(crate) mod types {
         data: HashMap<ipos3, Voxel>
     }
 
+    pub struct Map {
+        data: [[[Voxel;DEPTH as usize];WIDTH as usize];HEIGHT as usize]
+    }
+
+    impl Map {
+        pub fn set_voxel(&mut self, x:usize,y:usize,z:usize, voxel: Voxel) {
+            assert!(x < HEIGHT as usize);
+            assert!(y < WIDTH as usize);
+            assert!(z < DEPTH as usize);
+            self.data[x][y][z] = voxel;
+        }
+        pub fn get_voxel(&self, x:usize,y:usize,z:usize) -> Voxel {
+            assert!(x < HEIGHT as usize);
+            assert!(y < WIDTH as usize);
+            assert!(z < DEPTH as usize);
+            self.data[x][y][z]
+        }
+    }
+
     impl StreamReader for MapData {
         fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
             let mut data:  HashMap<ipos3, Voxel> = HashMap::new();
@@ -138,6 +157,7 @@ pub(crate) mod types {
         }
     }
 
+    #[derive(Copy, Clone)]
     struct Voxel {
         kind: VoxelType,
         color: BGRAColor
@@ -173,6 +193,7 @@ pub(crate) mod types {
         }
     }
 
+    #[derive(Copy, Clone)]
     enum VoxelType {
         Open,
         Solid
