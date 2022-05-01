@@ -6,23 +6,23 @@ pub(crate) mod types {
 
     use bytestream::*;
 
-    use crate::math::ipos8;
+    use crate::math::ipos3;
 
     use crate::constants::*;
 
     pub(crate)   struct MapData {
-        data: HashMap<ipos8, Voxel>
+        data: HashMap<ipos3, Voxel>
     }
 
     impl StreamReader for MapData {
         fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
-            let mut data:  HashMap<ipos8, Voxel> = HashMap::new();
+            let mut data:  HashMap<ipos3, Voxel> = HashMap::new();
             for y in 0..WIDTH {
                 for x in 0..HEIGHT {
                     let mut it = Span::read_from(buffer,order)?;
 
                     for z in 0..DEPTH {
-                        let pos = ipos8 {
+                        let pos = ipos3 {
                             x: x as u8,
                             y: y as u8,
                             z: z as u8
@@ -34,7 +34,7 @@ pub(crate) mod types {
                         let mut slice = &it.color_array[..];
 
                         for i in it.start_top_coloured .. (it.end_top_coloured + 1) {
-                            let pos = ipos8 {
+                            let pos = ipos3 {
                                 x: x as u8,
                                 y: y as u8,
                                 z: i
@@ -53,7 +53,7 @@ pub(crate) mod types {
                     }
 
                     for i in it.start_top_coloured .. DEPTH as u8 {
-                        let pos = ipos8 {
+                        let pos = ipos3 {
                             x: x as u8,
                             y: y as u8,
                             z: i
