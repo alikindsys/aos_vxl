@@ -33,6 +33,47 @@ pub(crate) mod types {
         }
     }
 
+    impl StreamReader for Map {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            let mut data = [[[Voxel { kind: VoxelType::Open, color: SKY_COLOR };DEPTH as usize];WIDTH as usize];HEIGHT as usize];
+            let mut map = Map { data };
+
+            for y in 0..WIDTH as usize {
+                for x in 0..HEIGHT as usize {
+                    for z in 0..DEPTH as usize {
+                        map.set_voxel(x,y,z, Voxel{kind: VoxelType::Open, color: SKY_COLOR });
+                    }
+
+                    let mut it = Span::read_from(buffer, order)?;
+
+                    while it.is_last_span() {
+                        let mut colors = &it.color_array[..];
+
+                        for i in it.start_top_coloured .. (it.end_top_coloured + 1) {
+                            let color : BGRAColor;
+
+                            if it.color_array.len() == 1 {
+                                color = it.color_array[0];
+                            } else {
+                                color = *(colors.take_first().unwrap_or(&DEFAULT_COLOR));
+                            }
+
+                            map.set_voxel(x,y,i as usize,Voxel { kind: VoxelType::Solid, color : color.clone()});
+                        }
+
+                        it = Span::read_from(buffer, order)?;
+                    }
+
+                    for i in it.start_top_coloured .. DEPTH as u8 {
+                        map.set_voxel(x,y,i as usize,Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR });
+                    }
+                }
+            }
+
+            Ok(map)
+        }
+    }
+
     impl StreamReader for MapData {
         fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
             let mut data:  HashMap<ipos3, Voxel> = HashMap::new();
