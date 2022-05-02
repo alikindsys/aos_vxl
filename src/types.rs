@@ -11,10 +11,6 @@ pub(crate) mod types {
 
     use crate::constants::*;
 
-    pub(crate)   struct MapData {
-        data: HashMap<ipos3, Voxel>
-    }
-
     pub struct Map {
         data: Vec<Vec<Vec<Voxel>>>
     }
@@ -68,61 +64,6 @@ pub(crate) mod types {
             }
 
             Ok(map)
-        }
-    }
-
-    impl StreamReader for MapData {
-        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
-            let mut data:  HashMap<ipos3, Voxel> = HashMap::new();
-            for y in 0..WIDTH {
-                for x in 0..HEIGHT {
-                    let mut it = Span::read_from(buffer,order)?;
-
-                    for z in 0..DEPTH {
-                        let pos = ipos3 {
-                            x: x as u8,
-                            y: y as u8,
-                            z: z as u8
-                        };
-                        data.entry(pos).or_insert(Voxel{ kind: VoxelType::Open, color: SKY_COLOR });
-                    }
-
-                    while !it.is_last_span() {
-                        let mut slice = &it.color_array[..];
-
-                        for i in it.start_top_coloured .. (it.end_top_coloured + 1) {
-                            let pos = ipos3 {
-                                x: x as u8,
-                                y: y as u8,
-                                z: i
-                            };
-                            let color : BGRAColor;
-                            if it.color_array.len() == 1 {
-                                color = it.color_array[0];
-                            } else {
-                                color = *(slice.take_first().unwrap_or(&DEFAULT_COLOR));
-                            }
-
-                            let k = data.entry(pos).or_insert(Voxel { kind: VoxelType::Solid, color : color.clone()});
-                            *k = Voxel { kind: VoxelType::Solid, color : color.clone()};
-                        }
-                        it = Span::read_from(buffer,order)?;
-                    }
-
-                    for i in it.start_top_coloured .. DEPTH as u8 {
-                        let pos = ipos3 {
-                            x: x as u8,
-                            y: y as u8,
-                            z: i
-                        } ;
-
-                        let k = data.entry(pos).or_insert(Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR });
-                        *k = Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR };
-                    }
-                }
-            }
-
-            Ok(Self { data })
         }
     }
 

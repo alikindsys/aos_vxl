@@ -14,7 +14,7 @@ mod tests {
     use std::io::{Cursor, Error, Read};
     use bytestream::ByteOrder::LittleEndian;
     use bytestream::StreamReader;
-    use crate::types::types::{Map, MapData};
+    use crate::types::types::Map;
 
 
 
