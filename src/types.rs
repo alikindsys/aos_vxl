@@ -40,10 +40,6 @@ pub(crate) mod types {
 
             for y in 0..WIDTH as usize {
                 for x in 0..HEIGHT as usize {
-                    for z in 0..DEPTH as usize {
-                        map.set_voxel(x,y,z, Voxel{kind: VoxelType::Open, color: SKY_COLOR });
-                    }
-
                     let mut it = Span::read_from(buffer, order)?;
 
                     while !it.is_last_span() {
