@@ -195,9 +195,9 @@ pub(crate) mod types {
     }
 
     #[derive(Copy, Clone)]
-    struct Voxel {
-        kind: VoxelType,
-        color: BGRAColor
+    pub struct Voxel {
+        pub kind: VoxelType,
+        pub color: BGRAColor
     }
 
     #[repr(C)]
@@ -232,6 +232,7 @@ pub(crate) mod types {
 
     #[derive(Copy, Clone)]
     enum VoxelType {
+    pub enum VoxelType {
         Open,
         Solid
     }
