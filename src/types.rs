@@ -46,7 +46,7 @@ pub(crate) mod types {
 
                     let mut it = Span::read_from(buffer, order)?;
 
-                    while it.is_last_span() {
+                    while !it.is_last_span() {
                         let mut colors = &it.color_array[..];
 
                         for i in it.start_top_coloured .. (it.end_top_coloured + 1) {
