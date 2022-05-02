@@ -14,7 +14,7 @@ mod tests {
     use std::io::{Cursor, Error, Read};
     use bytestream::ByteOrder::LittleEndian;
     use bytestream::StreamReader;
-    use crate::types::types::MapData;
+    use crate::types::types::Map;
 
 
 
@@ -26,7 +26,9 @@ mod tests {
 
         let mut cur =  Cursor::new(buffer);
 
-        MapData::read_from(&mut cur, LittleEndian)?;
+        let m = Map::read_from(&mut cur, LittleEndian)?;
+        let v = m.get_voxel(0,0,0);
+        print!("#{:X}{:X}{:X} | {:?}",v.color.r, v.color.g, v.color.b, v.kind);
         Ok(())
     }
 }

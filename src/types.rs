@@ -1,71 +1,69 @@
 pub(crate) mod types {
 
     use std::collections::{HashMap};
+    use std::fmt::{Display, Formatter};
 
     use std::io::{Error, ErrorKind, Read, Write};
 
     use bytestream::*;
 
-    use crate::math::ipos8;
+    use crate::math::ipos3;
 
     use crate::constants::*;
 
-    pub(crate)   struct MapData {
-        data: HashMap<ipos8, Voxel>
+    pub struct Map {
+        data: Vec<Vec<Vec<Voxel>>>
     }
 
-    impl StreamReader for MapData {
-        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
-            let mut data:  HashMap<ipos8, Voxel> = HashMap::new();
-            for y in 0..WIDTH {
-                for x in 0..HEIGHT {
-                    let mut it = Span::read_from(buffer,order)?;
+    impl Map {
+        pub fn set_voxel(&mut self, x:usize,y:usize,z:usize, voxel: Voxel) {
+            assert!(x < HEIGHT as usize);
+            assert!(y < WIDTH as usize);
+            assert!(z < DEPTH as usize);
+            self.data[x][y][z] = voxel;
+        }
+        pub fn get_voxel(&self, x:usize,y:usize,z:usize) -> Voxel {
+            assert!(x < HEIGHT as usize);
+            assert!(y < WIDTH as usize);
+            assert!(z < DEPTH as usize);
+            self.data[x][y][z]
+        }
+    }
 
-                    for z in 0..DEPTH {
-                        let pos = ipos8 {
-                            x: x as u8,
-                            y: y as u8,
-                            z: z as u8
-                        };
-                        data.entry(pos).or_insert(Voxel{ kind: VoxelType::Open, color: SKY_COLOR });
-                    }
+    impl StreamReader for Map {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            let mut data = vec![vec![vec![Voxel { kind: VoxelType::Open, color: SKY_COLOR };DEPTH as usize];WIDTH as usize];HEIGHT as usize];
+            let mut map = Map { data };
+
+            for y in 0..WIDTH as usize {
+                for x in 0..HEIGHT as usize {
+                    let mut it = Span::read_from(buffer, order)?;
 
                     while !it.is_last_span() {
-                        let mut slice = &it.color_array[..];
+                        let mut colors = &it.color_array[..];
 
                         for i in it.start_top_coloured .. (it.end_top_coloured + 1) {
-                            let pos = ipos8 {
-                                x: x as u8,
-                                y: y as u8,
-                                z: i
-                            };
                             let color : BGRAColor;
+
                             if it.color_array.len() == 1 {
                                 color = it.color_array[0];
                             } else {
-                                color = *(slice.take_first().unwrap_or(&DEFAULT_COLOR));
+                                color = *(colors.take_first().unwrap_or(&DEFAULT_COLOR));
                             }
 
-                            let k = data.entry(pos).or_insert(Voxel { kind: VoxelType::Solid, color : color.clone()});
-                            *k = Voxel { kind: VoxelType::Solid, color : color.clone()};
+                            map.set_voxel(x,y,i as usize,Voxel { kind: VoxelType::Solid, color : color.clone()});
                         }
-                        it = Span::read_from(buffer,order)?;
+
+                        it = Span::read_from(buffer, order)?;
                     }
 
                     for i in it.start_top_coloured .. DEPTH as u8 {
-                        let pos = ipos8 {
-                            x: x as u8,
-                            y: y as u8,
-                            z: i
-                        } ;
-
-                        let k = data.entry(pos).or_insert(Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR });
-                        *k = Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR };
+                        map.set_voxel(x,y,i as usize,Voxel { kind: VoxelType::Solid, color : DEFAULT_COLOR });
                     }
                 }
             }
 
-            Ok(Self { data })
+            Ok(map)
         }
     }
 
@@ -138,9 +136,10 @@ pub(crate) mod types {
         }
     }
 
-    struct Voxel {
-        kind: VoxelType,
-        color: BGRAColor
+    #[derive(Copy, Clone)]
+    pub struct Voxel {
+        pub kind: VoxelType,
+        pub color: BGRAColor
     }
 
     #[repr(C)]
@@ -173,7 +172,9 @@ pub(crate) mod types {
         }
     }
 
-    enum VoxelType {
+    #[derive(Copy, Clone)]
+    #[derive(Debug)]
+    pub enum VoxelType {
         Open,
         Solid
     }
