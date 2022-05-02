@@ -1,6 +1,7 @@
 pub(crate) mod types {
 
     use std::collections::{HashMap};
+    use std::fmt::{Display, Formatter};
 
     use std::io::{Error, ErrorKind, Read, Write};
 
@@ -231,7 +232,7 @@ pub(crate) mod types {
     }
 
     #[derive(Copy, Clone)]
-    enum VoxelType {
+    #[derive(Debug)]
     pub enum VoxelType {
         Open,
         Solid
