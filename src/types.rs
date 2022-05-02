@@ -15,7 +15,7 @@ pub(crate) mod types {
     }
 
     pub struct Map {
-        data: [[[Voxel;DEPTH as usize];WIDTH as usize];HEIGHT as usize]
+        data: Vec<Vec<Vec<Voxel>>>
     }
 
     impl Map {
@@ -35,7 +35,7 @@ pub(crate) mod types {
 
     impl StreamReader for Map {
         fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
-            let mut data = [[[Voxel { kind: VoxelType::Open, color: SKY_COLOR };DEPTH as usize];WIDTH as usize];HEIGHT as usize];
+            let mut data = vec![vec![vec![Voxel { kind: VoxelType::Open, color: SKY_COLOR };DEPTH as usize];WIDTH as usize];HEIGHT as usize];
             let mut map = Map { data };
 
             for y in 0..WIDTH as usize {
