@@ -81,22 +81,22 @@ mod data {
     }
 
     impl Column {
-        fn starting_height_bcr(&mut self, current_span: &Span) -> Option<u8> {
+        fn starting_height_bcr(&self, current_span: &Span) -> Option<u8> {
             let m = self.get_m(current_span)?;
             Some(m - current_span.header.get_z())
         }
 
-        fn length_solid(&mut self, current_span: &Span) -> Option<u8> {
+        fn length_solid(&self, current_span: &Span) -> Option<u8> {
             let m = self.get_m(current_span)?;
             Some(m - current_span.header.get_z() - current_span.header.starting_height_solid())
         }
 
-        fn ending_height_bcr(&mut self, current_span: &Span) -> Option<u8> {
+        fn ending_height_bcr(&self, current_span: &Span) -> Option<u8> {
             let m = self.get_m(current_span)?;
             Some(m + 1)
         }
 
-        fn ending_height_solid(&mut self, current_span: &Span) -> Option<u8> {
+        fn ending_height_solid(&self, current_span: &Span) -> Option<u8> {
             let m = self.get_m(current_span)?;
             Some(m - current_span.header.get_z() - 1)
         }
