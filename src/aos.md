@@ -72,13 +72,13 @@ Next byte after the list of colors, located at byte offset `(8 + N*4)` is the fi
 ### Useful formulas
 
 **Constants**:  
-`K` is `E - S + 1`  
+`K` is `E - S + 1` [Length of Top Colored Run]  
 `Z` is `(N - 1) - K` or 0, If `N=0` [Length of Bottom Colored Run]  
 `M` is `A` at **Next `Span`** or 64, If `N=0`  
 
 #### Determining storage space
 Span: N  
-Last Span: `4 * (1 + (E - S + 1))`  
+Last Span: `4 * (1 + K)`  
 
 #### `Open` voxel run
 Start: A  
@@ -88,7 +88,7 @@ Length: `S-A`
 #### Top Colored Run
 Start: S  
 End: E  
-Length: `E - S + 1`  
+Length: K  
 
 #### Bottom Colored Run
 Start: `M - Z`  
