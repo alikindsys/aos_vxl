@@ -11,11 +11,13 @@ mod data {
         data: VecDeque<Span>
     }
 
+    #[derive(PartialEq)]
     struct Span {
         header: SpanHeader,
         colors: Vec<BGRAColor>
     }
 
+    #[derive(Copy, Clone, PartialEq)]
     struct SpanHeader {
         /// N
         length: u8,
@@ -55,7 +57,7 @@ mod data {
             })
         }
     }
-
+    #[derive(PartialEq)]
     struct BGRAColor {
         b: u8,
         g: u8,
