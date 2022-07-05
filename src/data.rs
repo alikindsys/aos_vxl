@@ -1,5 +1,7 @@
 mod data {
     use std::collections::{LinkedList, VecDeque};
+    use std::io::Read;
+    use bytestream::{ByteOrder, StreamReader};
 
     struct VXL {
         cols: Vec<Vec<Column>>
@@ -48,6 +50,17 @@ mod data {
         g: u8,
         r: u8,
         a: u8
+    }
+
+    impl StreamReader for BGRAColor {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            Ok(Self {
+                b: u8::read_from(buffer,order)?,
+                g: u8::read_from(buffer,order)?,
+                r: u8::read_from(buffer,order)?,
+                a: u8::read_from(buffer,order)?
+            })
+        }
     }
 
     /// Internal representation used for reading a "Run" of voxel data.
