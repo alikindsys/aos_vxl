@@ -80,13 +80,10 @@ mod data {
     /// Equivalent to `Span`
     enum Run {
         LastSpan {
-            header: SpanHeader,
-            voxels: Vec<Voxel>,
-            last_voxel_height : u8
+            header: SpanHeader
         },
         Span {
-            header: SpanHeader,
-            voxels: Vec<Voxel>
+            header: SpanHeader
         }
     }
 
