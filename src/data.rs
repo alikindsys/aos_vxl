@@ -134,7 +134,7 @@ mod data {
     impl Run {
         fn size(&self) -> u8 {
             return match self {
-                Run::LastSpan { header, .. } => { 4 * (1 + header.get_k()) }
+                Run::LastSpan { header, .. } => { 1 + header.get_k() }
                 Run::Span { header, .. } => { header.length }
             }
         }
