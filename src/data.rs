@@ -11,6 +11,21 @@ mod data {
         data: VecDeque<Span>
     }
 
+    impl StreamReader for Column {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            let mut data = vec![];
+            let mut current_span = Span::read_from(buffer, order)?;
+
+            while current_span.header.length != 0 {
+                data.push(current_span);
+                current_span = Span::read_from(buffer, order)?;
+            }
+
+            data.push(current_span);
+            Ok(Self { data: VecDeque::from(data) })
+        }
+    }
+
     #[derive(PartialEq)]
     struct Span {
         header: SpanHeader,
