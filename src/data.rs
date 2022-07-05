@@ -7,6 +7,14 @@ mod data {
         cols: Vec<Vec<Column>>
     }
 
+    impl StreamReader for VXL {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            let mut cols: Vec<Vec<Column>> = (0..512).map(|_| (0..512).map(|_| Column::read_from(buffer, order)).try_collect()).try_collect()?;
+
+            Ok(Self{ cols })
+        }
+    }
+
     struct Column {
         data: VecDeque<Span>
     }
