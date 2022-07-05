@@ -17,6 +17,27 @@ mod data {
         colors: Vec<BGRAColor>
     }
 
+    impl StreamReader for Span {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            let header = SpanHeader::read_from(buffer, order)?;
+            let mut vec = vec![];
+            let run;
+
+            if header.length == 0 {
+                run = Run::LastSpan {header};
+            } else {
+                run = Run::Span {header}
+            }
+
+            for _ in 0..(run.size() - 1) {
+                vec.push(BGRAColor::read_from(buffer,order)?);
+            }
+
+            Ok(Self{ header, colors: vec })
+        }
+    }
+
+
     #[derive(Copy, Clone, PartialEq)]
     struct SpanHeader {
         /// N
