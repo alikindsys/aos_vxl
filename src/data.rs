@@ -45,6 +45,17 @@ mod data {
         fn length_bcr (&self) -> u8 { self.get_z() }
     }
 
+    impl StreamReader for SpanHeader {
+        fn read_from<R: Read>(buffer: &mut R, order: ByteOrder) -> std::io::Result<Self> {
+            Ok(Self {
+                length: u8::read_from(buffer,order)?,
+                starting_height_tcr: u8::read_from(buffer,order)?,
+                ending_height_tcr: u8::read_from(buffer,order)?,
+                starting_height_air: u8::read_from(buffer,order)?
+            })
+        }
+    }
+
     struct BGRAColor {
         b: u8,
         g: u8,
