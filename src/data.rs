@@ -152,7 +152,7 @@ mod data {
 
             let idx  = &self.data
                 .iter()
-                .position(|it| it == current_span)?;
+                .position(|it| *it == *current_span)?;
 
             let next = &self.data.get(*idx + 1)?;
 
