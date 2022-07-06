@@ -1,9 +1,9 @@
-mod data {
+pub(crate) mod data {
     use std::collections::{LinkedList, VecDeque};
     use std::io::Read;
     use bytestream::{ByteOrder, StreamReader};
 
-    struct VXL {
+    pub(crate) struct VXL {
         cols: Vec<Vec<Column>>
     }
 
