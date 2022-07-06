@@ -148,36 +148,35 @@ mod data {
     }
 
     impl Column {
-        fn starting_height_bcr(&self, current_span: &Span) -> Option<u8> {
-            let m = self.get_m(current_span)?;
+        fn starting_height_bcr(&self, current_span_idx: usize) -> Option<u8> {
+            let current_span = self.data.get(current_span_idx)?;
+            let m = self.get_m(current_span_idx + 1)?;
             Some(m - current_span.header.get_z())
         }
 
-        fn length_solid(&self, current_span: &Span) -> Option<u8> {
-            let m = self.get_m(current_span)?;
+        fn length_solid(&self, current_span_idx: usize) -> Option<u8> {
+            let current_span = self.data.get(current_span_idx)?;
+            let m = self.get_m(current_span_idx)?;
             Some(m - current_span.header.get_z() - current_span.header.starting_height_solid())
         }
 
-        fn ending_height_bcr(&self, current_span: &Span) -> Option<u8> {
-            let m = self.get_m(current_span)?;
+        fn ending_height_bcr(&self, current_span_idx: usize) -> Option<u8> {
+            let m = self.get_m(current_span_idx)?;
             Some(m + 1)
         }
 
-        fn ending_height_solid(&self, current_span: &Span) -> Option<u8> {
-            let m = self.get_m(current_span)?;
+        fn ending_height_solid(&self, current_span_idx: usize) -> Option<u8> {
+            let current_span = self.data.get(current_span_idx)?;
+            let m = self.get_m(current_span_idx)?;
             Some(m - current_span.header.get_z() - 1)
         }
 
-        fn get_m(&self, current_span: &Span) -> Option<u8> {
-            if current_span.header.length == 0 {
+        fn get_m(&self, current_span_idx: usize) -> Option<u8> {
+            if self.data.get(current_span_idx)?.header.length == 0 {
                 return Some(64)
             }
 
-            let idx  = &self.data
-                .iter()
-                .position(|it| *it == *current_span)?;
-
-            let next = &self.data.get(*idx + 1)?;
+            let next = &self.data.get(current_span_idx + 1)?;
 
             Some(next.header.starting_height_air)
         }
