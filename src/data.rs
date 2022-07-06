@@ -16,7 +16,7 @@ mod data {
     }
 
     struct Column {
-        data: VecDeque<Span>
+        data: Vec<Span>
     }
 
     impl StreamReader for Column {
@@ -30,7 +30,7 @@ mod data {
             }
 
             data.push(current_span);
-            Ok(Self { data: VecDeque::from(data) })
+            Ok(Self { data })
         }
     }
 
