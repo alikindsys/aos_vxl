@@ -1,0 +1,3 @@
+[submodule "vxl"]
+	path = vxl
+	url = https://github.com/kinvaris/openspades-maps.git
