@@ -132,6 +132,17 @@ pub(crate) mod data {
         }
     }
 
+    impl StreamWriter for BGRAColor {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.b.write_to(buffer,order)?;
+            self.g.write_to(buffer,order)?;
+            self.r.write_to(buffer,order)?;
+            self.a.write_to(buffer,order)?;
+
+            Ok(())
+        }
+    }
+
     /// Internal representation used for reading a "Run" of voxel data.
     /// Equivalent to `Span`
     enum Run {
