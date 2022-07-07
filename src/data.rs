@@ -1,7 +1,7 @@
 pub(crate) mod data {
     use std::collections::{LinkedList, VecDeque};
-    use std::io::Read;
-    use bytestream::{ByteOrder, StreamReader};
+    use std::io::{Read, Write};
+    use bytestream::{ByteOrder, StreamReader, StreamWriter};
 
     pub(crate) struct VXL {
         cols: Vec<Vec<Column>>
@@ -101,6 +101,18 @@ pub(crate) mod data {
             })
         }
     }
+
+    impl StreamWriter for SpanHeader {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.length.write_to(buffer, order)?;
+            self.starting_height_tcr.write_to(buffer, order)?;
+            self.ending_height_tcr.write_to(buffer,order)?;
+            self.starting_height_air.write_to(buffer, order)?;
+
+            Ok(())
+        }
+    }
+
     #[derive(PartialEq)]
     struct BGRAColor {
         b: u8,
