@@ -15,6 +15,12 @@ pub(crate) mod data {
         }
     }
 
+    impl StreamWriter for VXL {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.cols.iter().map(|it| it.iter().map(|x| x.write_to(buffer, order)).try_collect()).try_collect()
+        }
+    }
+
     struct Column {
         data: Vec<Span>
     }
