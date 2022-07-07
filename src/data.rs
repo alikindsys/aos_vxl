@@ -60,6 +60,15 @@ pub(crate) mod data {
         }
     }
 
+    impl StreamWriter for Span {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.header.write_to(buffer,order)?;
+
+            self.colors.iter().map(|color| color.write_to(buffer,order)).try_collect()?;
+
+            Ok(())
+        }
+    }
 
     #[derive(Copy, Clone, PartialEq)]
     struct SpanHeader {
