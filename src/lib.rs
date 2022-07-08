@@ -38,4 +38,9 @@ mod lib {
 
         Ok(())
     }
+
+    fn read_map_data(buffer: Vec<u8>) -> Result<VXL, Error> {
+        let cursor = &mut Cursor::new(buffer);
+        VXL::read_from(cursor,  LittleEndian)
+    }
 }
