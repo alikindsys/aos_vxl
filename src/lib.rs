@@ -28,15 +28,12 @@ mod lib {
         Ok(())
     }
 
-    fn read_file(path: String) -> Result<(), Error> {
+    fn read_file(path: String) -> Result<Vec<u8>, Error> {
         let mut file = File::open(path)?;
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
 
-        let mut cur =  Cursor::new(buffer);
-        let map_data = VXL::read_from(&mut cur, LittleEndian)?;
-
-        Ok(())
+        Ok(buffer)
     }
 
     fn read_map_data(buffer: Vec<u8>) -> Result<VXL, Error> {
