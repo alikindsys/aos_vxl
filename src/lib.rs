@@ -29,6 +29,24 @@ mod lib {
         Ok(())
     }
 
+    #[test]
+    fn write_vxl() -> Result<(), Error> {
+
+        let dir = fs::read_dir("vxl")?;
+        for file in dir {
+            let entry = file?;
+            let os_name = entry.file_name();
+            let name = os_name.to_str().unwrap();
+            if name.ends_with("vxl") {
+                println!("Reading [{}]",name);
+                read_write_map(format!("vxl/{}",name))?;
+                println!("Read [{}] successfully", name);
+            }
+        }
+
+        Ok(())
+    }
+
     fn read_write_map(path: String) -> Result<(), Error> {
         println!("Reading [{}]", path);
         let file = read_file(path)?;
