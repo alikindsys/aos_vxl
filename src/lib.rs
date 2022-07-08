@@ -28,6 +28,10 @@ mod lib {
         Ok(())
     }
 
+    fn get_map_data_from_file(path: String) -> Result<VXL, Error> {
+        read_map_data(read_file(path)?)
+    }
+
     fn read_file(path: String) -> Result<Vec<u8>, Error> {
         let mut file = File::open(path)?;
         let mut buffer = Vec::new();
