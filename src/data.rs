@@ -1,7 +1,7 @@
 pub(crate) mod data {
     use std::collections::{LinkedList, VecDeque};
-    use std::io::Read;
-    use bytestream::{ByteOrder, StreamReader};
+    use std::io::{Read, Write};
+    use bytestream::{ByteOrder, StreamReader, StreamWriter};
 
     pub(crate) struct VXL {
         cols: Vec<Vec<Column>>
@@ -12,6 +12,12 @@ pub(crate) mod data {
             let cols: Vec<Vec<Column>> = (0..512).map(|_| (0..512).map(|_| Column::read_from(buffer, order)).try_collect()).try_collect()?;
 
             Ok(Self{ cols })
+        }
+    }
+
+    impl StreamWriter for VXL {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.cols.iter().map(|it| it.iter().map(|x| x.write_to(buffer, order)).try_collect()).try_collect()
         }
     }
 
@@ -33,6 +39,13 @@ pub(crate) mod data {
             Ok(Self { data })
         }
     }
+
+    impl StreamWriter for Column {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.data.iter().map(|span| span.write_to(buffer, order)).try_collect()
+        }
+    }
+
 
     #[derive(PartialEq)]
     struct Span {
@@ -60,6 +73,15 @@ pub(crate) mod data {
         }
     }
 
+    impl StreamWriter for Span {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.header.write_to(buffer,order)?;
+
+            self.colors.iter().map(|color| color.write_to(buffer,order)).try_collect()?;
+
+            Ok(())
+        }
+    }
 
     #[derive(Copy, Clone, PartialEq)]
     struct SpanHeader {
@@ -101,6 +123,18 @@ pub(crate) mod data {
             })
         }
     }
+
+    impl StreamWriter for SpanHeader {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.length.write_to(buffer, order)?;
+            self.starting_height_tcr.write_to(buffer, order)?;
+            self.ending_height_tcr.write_to(buffer,order)?;
+            self.starting_height_air.write_to(buffer, order)?;
+
+            Ok(())
+        }
+    }
+
     #[derive(PartialEq)]
     struct BGRAColor {
         b: u8,
@@ -117,6 +151,17 @@ pub(crate) mod data {
                 r: u8::read_from(buffer,order)?,
                 a: u8::read_from(buffer,order)?
             })
+        }
+    }
+
+    impl StreamWriter for BGRAColor {
+        fn write_to<W: Write>(&self, buffer: &mut W, order: ByteOrder) -> std::io::Result<()> {
+            self.b.write_to(buffer,order)?;
+            self.g.write_to(buffer,order)?;
+            self.r.write_to(buffer,order)?;
+            self.a.write_to(buffer,order)?;
+
+            Ok(())
         }
     }
 
