@@ -21,7 +21,7 @@ mod lib {
             let name = os_name.to_str().unwrap();
             if name.ends_with("vxl") {
                 println!("Reading [{}]",name);
-                read_file(format!("vxl/{}",name))?;
+                get_map_data_from_file(format!("vxl/{}",name))?;
                 println!("Read [{}] successfully", name);
             }
         }
