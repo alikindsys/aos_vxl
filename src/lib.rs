@@ -6,7 +6,6 @@ mod lib {
     use std::fs;
     use std::fs::File;
     use std::io::{Cursor, Error, Read};
-    use std::iter::Map;
     use bytestream::ByteOrder::LittleEndian;
     use bytestream::{StreamReader, StreamWriter};
     use sha2::{Sha512,Digest};
