@@ -135,7 +135,7 @@ pub(crate) mod data {
         }
     }
 
-    #[derive(PartialEq)]
+    #[derive(PartialEq, Copy, Clone)]
     struct BGRAColor {
         b: u8,
         g: u8,
@@ -185,6 +185,7 @@ pub(crate) mod data {
         }
     }
 
+    #[derive(Copy, Clone)]
     enum Voxel {
         Open,
         Colored {color: BGRAColor},
